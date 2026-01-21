@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Skeleton Sample</string>
+    <string name="feed_screen">Feed</string>
+    <string name="profile_screen">Profile</string>
+    <string name="dashboard_screen">Dashboard</string>
+    <string name="reload">Reload</string>
+</resources>
