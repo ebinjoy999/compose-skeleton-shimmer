@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.ebin.skeleton.shimmer.ShimmerConfig
 import com.ebin.skeleton.shimmer.ShimmerState
 import com.ebin.skeleton.shimmer.rememberShimmerState
 
@@ -49,6 +50,7 @@ import com.ebin.skeleton.shimmer.rememberShimmerState
  * @param descriptionLines Number of description lines (if shown)
  * @param cornerRadius Corner radius for the card
  * @param shimmerState Optional shared shimmer state for synchronized animations
+ * @param config Optional shimmer configuration (used when shimmerState is null)
  */
 @Composable
 fun SkeletonCard(
@@ -58,9 +60,10 @@ fun SkeletonCard(
     showDescription: Boolean = true,
     descriptionLines: Int = 2,
     cornerRadius: Dp = 12.dp,
-    shimmerState: ShimmerState? = null
+    shimmerState: ShimmerState? = null,
+    config: ShimmerConfig = ShimmerConfig.Default
 ) {
-    val state = shimmerState ?: rememberShimmerState()
+    val state = shimmerState ?: rememberShimmerState(config = config)
     
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -143,6 +146,7 @@ fun SkeletonCard(
  * @param showTrailing Whether to show a trailing element skeleton
  * @param trailingWidth Width of the trailing element
  * @param shimmerState Optional shared shimmer state for synchronized animations
+ * @param config Optional shimmer configuration (used when shimmerState is null)
  */
 @Composable
 fun SkeletonListItem(
@@ -152,9 +156,10 @@ fun SkeletonListItem(
     showSubtitle: Boolean = true,
     showTrailing: Boolean = false,
     trailingWidth: Dp = 60.dp,
-    shimmerState: ShimmerState? = null
+    shimmerState: ShimmerState? = null,
+    config: ShimmerConfig = ShimmerConfig.Default
 ) {
-    val state = shimmerState ?: rememberShimmerState()
+    val state = shimmerState ?: rememberShimmerState(config = config)
     
     Row(
         modifier = modifier
@@ -236,6 +241,7 @@ fun SkeletonListItem(
  * @param bioLines Number of bio lines to show
  * @param actionButtonCount Number of action button placeholders
  * @param shimmerState Optional shared shimmer state for synchronized animations
+ * @param config Optional shimmer configuration (used when shimmerState is null)
  */
 @Composable
 fun SkeletonProfile(
@@ -244,9 +250,10 @@ fun SkeletonProfile(
     showBio: Boolean = true,
     bioLines: Int = 2,
     actionButtonCount: Int = 1,
-    shimmerState: ShimmerState? = null
+    shimmerState: ShimmerState? = null,
+    config: ShimmerConfig = ShimmerConfig.Default
 ) {
-    val state = shimmerState ?: rememberShimmerState()
+    val state = shimmerState ?: rememberShimmerState(config = config)
     
     Column(
         modifier = modifier
@@ -334,15 +341,17 @@ fun SkeletonProfile(
  * @param showLabel Whether to show a label skeleton at the bottom
  * @param cornerRadius Corner radius for the tile
  * @param shimmerState Optional shared shimmer state for synchronized animations
+ * @param config Optional shimmer configuration (used when shimmerState is null)
  */
 @Composable
 fun SkeletonTile(
     modifier: Modifier = Modifier,
     showLabel: Boolean = false,
     cornerRadius: Dp = 12.dp,
-    shimmerState: ShimmerState? = null
+    shimmerState: ShimmerState? = null,
+    config: ShimmerConfig = ShimmerConfig.Default
 ) {
-    val state = shimmerState ?: rememberShimmerState()
+    val state = shimmerState ?: rememberShimmerState(config = config)
     
     Column(modifier = modifier) {
         SkeletonBox(

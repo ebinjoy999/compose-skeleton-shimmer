@@ -1,7 +1,6 @@
 package com.ebin.skeleton.sample.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,20 +28,27 @@ import androidx.compose.ui.unit.dp
 import com.ebin.skeleton.sample.components.FeedPostCard
 import com.ebin.skeleton.sample.data.FeedPost
 import com.ebin.skeleton.sample.data.SampleData
+import com.ebin.skeleton.shimmer.ShimmerConfig
+import com.ebin.skeleton.shimmer.ShimmerDropOff
+import com.ebin.skeleton.shimmer.ShimmerEasing
+import com.ebin.skeleton.shimmer.rememberShimmerController
 import com.ebin.skeleton.shimmer.rememberShimmerState
 import com.ebin.skeleton.skeleton.Skeleton
 import com.ebin.skeleton.skeleton.SkeletonCard
+import com.ebin.skeleton.skeleton.SkeletonTransition
 import com.ebin.skeleton.skeleton.skeletonItems
 import kotlinx.coroutines.delay
 
 /**
- * Feed Screen - Demonstrates skeleton loading in a LazyColumn of cards.
+ * Feed Screen - Demonstrates advanced skeleton loading features.
  *
- * Features:
+ * Features showcased:
  * - LazyColumn with skeleton items during loading
- * - Synchronized shimmer animation across all skeleton cards
- * - Smooth crossfade transition to real content
- * - Pull-to-refresh style reload button
+ * - **Staggered shimmer animation** with delay between items
+ * - **Soft drop-off** gradient for smooth shimmer edges
+ * - **EaseInOut easing** for natural animation feel
+ * - **Shimmer controller** for pause/resume control
+ * - Crossfade transition to real content
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,17 +56,34 @@ fun FeedScreen() {
     var isLoading by remember { mutableStateOf(true) }
     var posts by remember { mutableStateOf<List<FeedPost>>(emptyList()) }
     
+    // Shimmer controller for global control
+    val shimmerController = rememberShimmerController()
+    
+    // Advanced shimmer configuration with staggered delay
+    val shimmerConfig = ShimmerConfig(
+        durationMillis = 1200,
+        delayMillis = 100,
+        shimmerWidth = 0.45f,
+        dropOff = ShimmerDropOff.Soft,
+        easing = ShimmerEasing.EaseInOut,
+        staggerDelayMillis = 80  // Stagger delay between items
+    )
+    
+    // Shared shimmer state
+    val shimmerState = rememberShimmerState(
+        config = shimmerConfig,
+        controller = shimmerController
+    )
+    
     // Simulate loading
     LaunchedEffect(isLoading) {
         if (isLoading) {
+            shimmerController.resume()
             delay(2500)
             posts = SampleData.feedPosts
             isLoading = false
         }
     }
-    
-    // Shared shimmer state for synchronized animation
-    val shimmerState = rememberShimmerState()
     
     Scaffold(
         topBar = {
@@ -89,19 +112,26 @@ fun FeedScreen() {
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Skeleton items when loading
+            // Skeleton items with staggered animation
             skeletonItems(
                 isLoading = isLoading,
                 count = 5,
                 shimmerState = shimmerState
-            ) { _, state ->
+            ) { index, state ->
+                // Each item gets a stagger offset based on index
+                val staggeredState = rememberShimmerState(
+                    config = shimmerConfig,
+                    controller = shimmerController,
+                    staggerIndex = index
+                )
+                
                 SkeletonCard(
                     modifier = Modifier.fillMaxWidth(),
                     imageHeight = 160.dp,
                     titleLines = 1,
                     showDescription = true,
                     descriptionLines = 2,
-                    shimmerState = state
+                    shimmerState = staggeredState
                 )
             }
             
@@ -111,7 +141,14 @@ fun FeedScreen() {
                     items = posts,
                     key = { it.id }
                 ) { post ->
-                    FeedPostCard(post = post)
+                    Skeleton(
+                        isLoading = false,
+                        transition = SkeletonTransition.Crossfade,
+                        transitionDurationMs = 400,
+                        skeleton = { SkeletonCard(shimmerState = shimmerState) }
+                    ) {
+                        FeedPostCard(post = post)
+                    }
                 }
             }
         }

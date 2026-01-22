@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import com.ebin.skeleton.sample.components.DashboardTileCard
 import com.ebin.skeleton.sample.data.DashboardTile
 import com.ebin.skeleton.sample.data.SampleData
+import com.ebin.skeleton.shimmer.ShimmerConfig
+import com.ebin.skeleton.shimmer.ShimmerType
 import com.ebin.skeleton.shimmer.rememberShimmerState
 import com.ebin.skeleton.skeleton.SkeletonTile
 import com.ebin.skeleton.skeleton.skeletonGridItems
@@ -62,7 +64,14 @@ fun DashboardScreen() {
         }
     }
     
-    val shimmerState = rememberShimmerState()
+    // Use Radial/Spotlight shimmer for grid tiles - creates a spotlight effect
+    val radialConfig = ShimmerConfig(
+        type = ShimmerType.Radial,
+        durationMillis = 1800,
+        shimmerWidth = 1f,
+        intensity = 0.8f
+    )
+    val shimmerState = rememberShimmerState(config = radialConfig)
     
     Scaffold(
         topBar = {
