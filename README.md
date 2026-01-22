@@ -1,6 +1,6 @@
 # 💀 Compose Skeleton Pack
 
-> A lightweight, Compose-first Skeleton & Shimmer library for modern Android apps.
+> A feature-rich, Compose-first Skeleton & Shimmer library for modern Android apps with advanced animation controls.
 
 [![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=24)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -17,7 +17,11 @@
 - **🌙 Dark Mode** - Automatic light/dark theme adaptation
 - **📦 Lightweight** - Minimal dependencies, small library size
 - **🔧 Highly Customizable** - Flexible API for all skeleton needs
-- **♿ Accessibility** - Proper semantics for screen readers
+- **♿ Accessibility** - Proper semantics, reduced motion support for screen readers
+- **🎭 Multiple Shimmer Types** - Linear, Radial, Pulse, Wave effects
+- **⏸️ Pause/Resume** - Global shimmer controller for battery optimization
+- **🔄 Staggered Animations** - Cascading effects for list items
+- **📱 Lifecycle-Aware** - Auto-pause on background, smart resource management
 
 ---
 
@@ -210,6 +214,173 @@ rememberShimmerState(direction = ShimmerDirection.TopToBottom)
 rememberShimmerState(direction = ShimmerDirection.BottomToTop)
 ```
 
+---
+
+## 🎭 Advanced Shimmer Effects
+
+### Shimmer Types
+
+Choose from four distinct shimmer animation styles:
+
+```kotlin
+// Linear shimmer (default) - Traditional left-to-right sweep
+val linearConfig = ShimmerConfig(shimmerType = ShimmerType.Linear)
+
+// Radial/Spotlight shimmer - Expanding circle effect
+val radialConfig = ShimmerConfig(shimmerType = ShimmerType.Radial)
+
+// Pulse/Breathing shimmer - Soft fade in/out effect
+val pulseConfig = ShimmerConfig(shimmerType = ShimmerType.Pulse)
+
+// Wave shimmer - Multiple wave ripples
+val waveConfig = ShimmerConfig(shimmerType = ShimmerType.Wave, waveCount = 3)
+```
+
+### Pre-built Config Presets
+
+```kotlin
+// Use ready-made configurations
+ShimmerConfig.Default      // Standard linear shimmer
+ShimmerConfig.Subtle       // Gentle, slow shimmer
+ShimmerConfig.Prominent    // Bold, fast shimmer
+ShimmerConfig.Pulse        // Breathing effect
+ShimmerConfig.Spotlight    // Radial spotlight
+ShimmerConfig.MultiWave    // Multiple wave ripples
+ShimmerConfig.Accessible   // Reduced motion safe
+```
+
+### Custom Shimmer Configuration
+
+```kotlin
+val customConfig = ShimmerConfig(
+    shimmerType = ShimmerType.Linear,
+    direction = ShimmerDirection.LeftToRight,
+    durationMillis = 1200,
+    angle = 20f,                    // Tilt angle in degrees
+    shimmerWidth = 200f,            // Width of shimmer band
+    intensity = 0.7f,               // Highlight intensity (0.0-1.0)
+    dropOff = ShimmerDropOff.Soft,  // Gradient falloff style
+    easing = ShimmerEasing.EaseInOut,
+    repeatMode = ShimmerRepeatMode.Restart,
+    staggerDelayMillis = 0,         // Delay for list items
+    respectReducedMotion = true     // Accessibility support
+)
+
+val shimmerState = rememberShimmerState(config = customConfig)
+SkeletonCard(shimmerState = shimmerState)
+```
+
+### Shimmer Angle & Tilt
+
+```kotlin
+// Angled shimmer (e.g., diagonal sweep)
+val angledConfig = ShimmerConfig(
+    angle = 30f  // 30 degrees tilt
+)
+```
+
+### Drop-off Styles
+
+Control how the shimmer gradient fades at edges:
+
+```kotlin
+ShimmerDropOff.Linear   // Standard linear falloff
+ShimmerDropOff.Soft     // Gentle Gaussian-like falloff
+ShimmerDropOff.Sharp    // Quick, crisp edges
+```
+
+### Easing Functions
+
+```kotlin
+ShimmerEasing.Linear       // Constant speed
+ShimmerEasing.EaseIn       // Slow start, fast end
+ShimmerEasing.EaseOut      // Fast start, slow end
+ShimmerEasing.EaseInOut    // Slow start & end, fast middle
+ShimmerEasing.Spring       // Bouncy spring effect
+```
+
+---
+
+## ⏸️ Shimmer Control
+
+### Global Pause/Resume
+
+Pause all shimmer animations for battery optimization:
+
+```kotlin
+val controller = rememberShimmerController()
+
+// Pause all shimmers
+controller.pause()
+
+// Resume all shimmers
+controller.resume()
+
+// Create states that respect the controller
+val shimmerState = rememberShimmerState(controller = controller)
+```
+
+### Lifecycle-Aware Shimmer
+
+Automatically pause when app goes to background:
+
+```kotlin
+val shimmerState = rememberLifecycleAwareShimmerState(
+    config = ShimmerConfig.Default
+)
+```
+
+### Limited Iterations
+
+Stop shimmer after N iterations:
+
+```kotlin
+val shimmerState = rememberLimitedShimmerState(
+    maxIterations = 5,
+    onComplete = { /* Animation finished */ }
+)
+```
+
+### Animation Callbacks
+
+```kotlin
+val shimmerState = rememberShimmerStateWithCallbacks(
+    onAnimationStart = { /* Started */ },
+    onAnimationIteration = { iteration -> /* Iteration $iteration */ },
+    onAnimationEnd = { /* Stopped */ }
+)
+```
+
+---
+
+## 🔄 Staggered Animations
+
+Create cascading shimmer effects for list items:
+
+```kotlin
+// Individual stagger delay
+val shimmerState1 = rememberShimmerState(
+    config = ShimmerConfig(staggerDelayMillis = 0)
+)
+val shimmerState2 = rememberShimmerState(
+    config = ShimmerConfig(staggerDelayMillis = 100)
+)
+val shimmerState3 = rememberShimmerState(
+    config = ShimmerConfig(staggerDelayMillis = 200)
+)
+
+// Or use the helper function
+val states = rememberStaggeredShimmerStates(
+    count = 5,
+    staggerDelayMillis = 100,
+    config = ShimmerConfig.Default
+)
+
+states.forEachIndexed { index, state ->
+    SkeletonListItem(shimmerState = state)
+}
+```
+
 ### Custom Colors
 
 ```kotlin
@@ -281,6 +452,49 @@ SkeletonTheme(colors = customColors) {
 
 ---
 
+## ♿ Accessibility
+
+### Reduced Motion Support
+
+Automatically respect system accessibility settings:
+
+```kotlin
+// Config that disables animation when reduced motion is enabled
+val config = ShimmerConfig(respectReducedMotion = true)
+
+// Or use the accessible preset
+val accessibleState = rememberShimmerStateWithPreset(ShimmerConfig.Accessible)
+
+// Check system setting manually
+val reduceMotion = rememberReduceMotionEnabled()
+if (reduceMotion) {
+    // Show static placeholder
+}
+```
+
+### Semantic Descriptions
+
+Add screen reader support:
+
+```kotlin
+SkeletonBox(
+    modifier = Modifier
+        .skeletonSemantics(
+            type = SkeletonSemanticType.Image,
+            description = "Loading profile picture"
+        )
+)
+```
+
+### Pre-built Accessibility Helpers
+
+```kotlin
+// Get an accessible shimmer config based on system settings
+val accessibleConfig = rememberAccessibleShimmerConfig()
+```
+
+---
+
 ## 📁 Project Structure
 
 ```
@@ -288,13 +502,16 @@ compose-skeleton/
 ├── skeleton-core/                    # Library module
 │   └── src/main/java/com/ebin/skeleton/
 │       ├── shimmer/
-│       │   ├── ShimmerDirection.kt   # Animation directions
-│       │   └── ShimmerState.kt       # Shimmer state management
+│       │   ├── ShimmerConfig.kt      # Advanced configuration
+│       │   ├── ShimmerState.kt       # State management
+│       │   └── ShimmerEffects.kt     # Lifecycle & callbacks
 │       ├── skeleton/
 │       │   ├── SkeletonPrimitives.kt # Basic shapes
 │       │   ├── SkeletonComponents.kt # Pre-built components
 │       │   ├── SkeletonController.kt # Visibility controllers
-│       │   └── LazySkeletonItems.kt  # List/Grid extensions
+│       │   ├── LazySkeletonItems.kt  # List/Grid extensions
+│       │   ├── SkeletonAccessibility.kt # Accessibility utils
+│       │   └── SkeletonSemantics.kt  # Screen reader support
 │       ├── modifier/
 │       │   └── ShimmerModifier.kt    # Modifier extensions
 │       └── theme/
@@ -303,9 +520,9 @@ compose-skeleton/
 ├── sample-app/                       # Demo application
 │   └── src/main/java/com/ebin/skeleton/sample/
 │       ├── screens/
-│       │   ├── FeedScreen.kt         # Feed demo
-│       │   ├── ProfileScreen.kt      # Profile demo
-│       │   └── DashboardScreen.kt    # Dashboard demo
+│       │   ├── FeedScreen.kt         # Staggered shimmer demo
+│       │   ├── ProfileScreen.kt      # Pulse shimmer demo
+│       │   └── DashboardScreen.kt    # Radial shimmer demo
 │       ├── components/
 │       │   └── RealComponents.kt     # Actual content
 │       └── MainActivity.kt           # Entry point
@@ -370,6 +587,23 @@ Research shows that skeleton screens can reduce perceived wait time by up to **3
 
 ## 📋 API Reference
 
+### Shimmer Configuration
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `shimmerType` | `ShimmerType` | `Linear` | Animation style (Linear, Radial, Pulse, Wave) |
+| `direction` | `ShimmerDirection` | `LeftToRight` | Animation direction |
+| `durationMillis` | `Int` | `1200` | Animation cycle duration |
+| `angle` | `Float` | `0f` | Tilt angle in degrees |
+| `shimmerWidth` | `Float` | `200f` | Width of shimmer band |
+| `intensity` | `Float` | `0.6f` | Highlight brightness (0.0-1.0) |
+| `dropOff` | `ShimmerDropOff` | `Linear` | Gradient falloff style |
+| `easing` | `ShimmerEasing` | `Linear` | Animation easing function |
+| `repeatMode` | `ShimmerRepeatMode` | `Restart` | How animation repeats |
+| `waveCount` | `Int` | `2` | Number of waves (Wave type only) |
+| `staggerDelayMillis` | `Int` | `0` | Delay for cascading effects |
+| `respectReducedMotion` | `Boolean` | `true` | Honor accessibility settings |
+
 ### Skeleton Components
 
 | Component | Description |
@@ -377,6 +611,7 @@ Research shows that skeleton screens can reduce perceived wait time by up to **3
 | `SkeletonBox` | Rectangular placeholder |
 | `SkeletonCircle` | Circular placeholder |
 | `SkeletonLine` | Text line placeholder |
+| `SkeletonParagraph` | Multiple text lines |
 | `SkeletonCard` | Card with image & text |
 | `SkeletonListItem` | List item with avatar |
 | `SkeletonProfile` | Profile header |
@@ -389,6 +624,18 @@ Research shows that skeleton screens can reduce perceived wait time by up to **3
 | `Skeleton` | Show skeleton or content |
 | `SkeletonIfNull` | Skeleton until data loads |
 | `SkeletonIfEmpty` | Skeleton until list has items |
+| `ShimmerController` | Global pause/resume control |
+
+### State Functions
+
+| Function | Description |
+|----------|-------------|
+| `rememberShimmerState()` | Basic shimmer state |
+| `rememberShimmerStateWithPreset()` | State with config preset |
+| `rememberShimmerController()` | Global shimmer controller |
+| `rememberLifecycleAwareShimmerState()` | Auto-pause on background |
+| `rememberLimitedShimmerState()` | Stop after N iterations |
+| `rememberStaggeredShimmerStates()` | Cascading list animations |
 
 ### Modifiers
 
@@ -397,6 +644,7 @@ Research shows that skeleton screens can reduce perceived wait time by up to **3
 | `Modifier.shimmer()` | Basic shimmer effect |
 | `Modifier.shimmer(state)` | Shimmer with custom state |
 | `Modifier.shimmerWithBrush()` | Custom shimmer brush |
+| `Modifier.skeletonSemantics()` | Accessibility semantics |
 
 ---
 
