@@ -35,11 +35,13 @@
 
 ## 🚀 Installation
 
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.ebinjoy999/compose-skeleton-shimmer)](https://central.sonatype.com/artifact/io.github.ebinjoy999/compose-skeleton-shimmer)
+
 Add the dependency to your module's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.ebin.skeleton:skeleton-core:1.0.0")
+    implementation("io.github.ebinjoy999:compose-skeleton-shimmer:1.0.0")
 }
 ```
 
@@ -50,7 +52,7 @@ Or using version catalog (`libs.versions.toml`):
 skeleton = "1.0.0"
 
 [libraries]
-skeleton-core = { group = "com.ebin.skeleton", name = "skeleton-core", version.ref = "skeleton" }
+skeleton-core = { group = "io.github.ebinjoy999", name = "compose-skeleton-shimmer", version.ref = "skeleton" }
 ```
 
 ---

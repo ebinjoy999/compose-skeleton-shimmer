@@ -10,3 +10,5 @@
 local.properties
 /sample-app/build
 /skeleton-core/build
+
+gradle.properties
