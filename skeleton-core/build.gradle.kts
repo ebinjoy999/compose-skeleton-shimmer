@@ -1,12 +1,13 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     id("com.vanniktech.maven.publish") version "0.28.0"
 }
 
 android {
     namespace = "com.ebin.skeleton"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 24
@@ -30,10 +31,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-        }
+    kotlinOptions {
+        jvmTarget = "11"
     }
 
     buildFeatures {
@@ -42,7 +41,17 @@ android {
 
 }
 
+configurations.all {
+    resolutionStrategy {
+        force("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
+        force("org.jetbrains.kotlin:kotlin-stdlib-common:2.0.21")
+    }
+}
+
 dependencies {
+    // Explicitly declare Kotlin stdlib first
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
+    
     implementation(libs.androidx.core.ktx)
     
     // Compose
@@ -70,7 +79,7 @@ mavenPublishing {
     coordinates(
         groupId = "io.github.ebinjoy999",
         artifactId = "compose-skeleton-shimmer",
-        version = "1.0.0"
+        version = "1.0.4"
     )
 
     pom {
