@@ -41,7 +41,7 @@ Add the dependency to your module's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("io.github.ebinjoy999:compose-skeleton-shimmer:1.0.0")
+    implementation("io.github.ebinjoy999:compose-skeleton-shimmer:1.0.4")
 }
 ```
 
@@ -49,7 +49,7 @@ Or using version catalog (`libs.versions.toml`):
 
 ```toml
 [versions]
-skeleton = "1.0.0"
+skeleton = "1.0.4"
 
 [libraries]
 skeleton-core = { group = "io.github.ebinjoy999", name = "compose-skeleton-shimmer", version.ref = "skeleton" }
