@@ -1,8 +1,9 @@
 # 💀 Compose Skeleton Pack
 
-> A feature-rich, Compose-first Skeleton & Shimmer library for modern Android apps with advanced animation controls.
+> A feature-rich, Kotlin Multiplatform Skeleton & Shimmer library for Android, Desktop & iOS with advanced animation controls.
 
 [![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=24)
+[![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin%20Multiplatform-2.0.21-blue.svg)](https://kotlinlang.org/docs/multiplatform.html)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Ready-green.svg)](https://developer.android.com/jetpack/compose)
 [![Material 3](https://img.shields.io/badge/Material%203-Supported-purple.svg)](https://m3.material.io/)
@@ -11,6 +12,7 @@
 
 ## ✨ Features
 
+- **🔄 Kotlin Multiplatform** - Android, Desktop & iOS support with shared UI components
 - **🎯 Compose-First** - Built entirely with Jetpack Compose, no legacy View dependencies
 - **⚡ High Performance** - GPU-friendly shimmer animations, 60fps scrolling
 - **🎨 Material 3 Ready** - Supports Material You dynamic colors and theming
@@ -33,6 +35,10 @@
 
 ---
 
+![KMM Supported](docs/kmm.png)
+
+---
+
 ## 🚀 Installation
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.ebinjoy999/compose-skeleton-shimmer)](https://central.sonatype.com/artifact/io.github.ebinjoy999/compose-skeleton-shimmer)
@@ -41,7 +47,7 @@ Add the dependency to your module's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("io.github.ebinjoy999:compose-skeleton-shimmer:1.0.4")
+    implementation("io.github.ebinjoy999:compose-skeleton-shimmer:2.0.1")
 }
 ```
 
@@ -49,7 +55,7 @@ Or using version catalog (`libs.versions.toml`):
 
 ```toml
 [versions]
-skeleton = "1.0.4"
+skeleton = "2.0.1"
 
 [libraries]
 skeleton-core = { group = "io.github.ebinjoy999", name = "compose-skeleton-shimmer", version.ref = "skeleton" }
@@ -688,8 +694,4 @@ limitations under the License.
 - [Material 3](https://m3.material.io/) - Design system
 - [Facebook Shimmer](https://facebook.github.io/shimmer-android/) - Inspiration for shimmer effect
 
----
 
-<p align="center">
-  Made with ❤️ for the Android community
-</p>
