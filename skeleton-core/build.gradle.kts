@@ -1,8 +1,99 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
+    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.compose.compiler)
     id("com.vanniktech.maven.publish") version "0.28.0"
+}
+
+kotlin {
+    // Android target
+    androidTarget {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+        publishLibraryVariants("release")
+    }
+
+    // JVM/Desktop target
+    jvm("desktop") {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+    }
+
+    // iOS targets (source code only - no framework generation initially)
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                // Compose Multiplatform
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material3)
+                implementation(compose.ui)
+
+                // Coroutines
+                implementation(libs.kotlinx.coroutines.core)
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kotlinx.coroutines.test)
+            }
+        }
+
+        val androidMain by getting {
+            dependencies {
+                // Android-specific Compose dependencies (compileOnly for @Preview support)
+                compileOnly(libs.androidx.ui.tooling.preview)
+                
+                // Android lifecycle for lifecycle-aware features
+                implementation(libs.androidx.lifecycle.runtime.ktx)
+                implementation(libs.androidx.lifecycle.runtime.compose)
+                
+                // Coroutines Android
+                implementation(libs.kotlinx.coroutines.android)
+            }
+        }
+
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(libs.junit)
+            }
+        }
+
+        val androidInstrumentedTest by getting {
+            dependencies {
+                implementation(libs.androidx.junit)
+                implementation(libs.androidx.espresso.core)
+            }
+        }
+
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+            }
+        }
+
+        val desktopTest by getting
+
+        // iOS targets use the default hierarchy template
+        // iosMain and iosTest are automatically created
+    }
+
+    // Apply default hierarchy template for iOS sources
+    applyDefaultHierarchyTemplate()
 }
 
 android {
@@ -11,7 +102,6 @@ android {
 
     defaultConfig {
         minSdk = 24
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -31,47 +121,20 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-
     buildFeatures {
         compose = true
     }
 
-}
-
-configurations.all {
-    resolutionStrategy {
-        force("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
-        force("org.jetbrains.kotlin:kotlin-stdlib-common:2.0.21")
-    }
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    sourceSets["main"].res.srcDirs("src/androidMain/res")
 }
 
 dependencies {
-    // Explicitly declare Kotlin stdlib first
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
-    
-    implementation(libs.androidx.core.ktx)
-    
-    // Compose
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    
+    // Android tooling (debug only)
     debugImplementation(libs.androidx.ui.tooling)
-    
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }
 
-
-
 mavenPublishing {
-//    Publish using Sonatype’s new Central Portal, not the old OSSRH servers.”
     publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
 
     signAllPublications()
@@ -79,12 +142,12 @@ mavenPublishing {
     coordinates(
         groupId = "io.github.ebinjoy999",
         artifactId = "compose-skeleton-shimmer",
-        version = "1.0.4"
+        version = "2.0.1"
     )
 
     pom {
         name.set("Compose Skeleton Shimmer")
-        description.set("A lightweight, production-ready Skeleton & Shimmer library for Jetpack Compose")
+        description.set("A lightweight, production-ready Skeleton & Shimmer library for Compose Multiplatform")
         url.set("https://github.com/ebinjoy999/compose-skeleton-shimmer")
 
         licenses {
